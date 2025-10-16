@@ -13,101 +13,90 @@ import java.util.Random;
 
 public class Main {
 
-    public static boolean unique1(int[] data) {
-        int n = data.length;
-        for (int j = 0; j < n - 1; j++)
-            for (int k = j + 1; k < n; k++)
-                if (data[j] == data[k]) return false;
-        return true;
-    }
+     // ---- Algorithms -----------------------------------------
+     public static boolean unique1(int[] data) {
+     int n = data.length;
+     for (int j = 0; j < n - 1; j++)
+     for (int k = j + 1; k < n; k++)
+     if (data[j] == data[k]) return false;
+     return true;
+     }
 
-    public static boolean unique2(int[] data) {
-        int n = data.length;
-        int[] temp = Arrays.copyOf(data, n);
-        Arrays.sort(temp);
-        for (int j = 0; j < n - 1; j++)
-            if (temp[j] == temp[j + 1]) return false;
-        return true;
-    }
+     public static boolean unique2(int[] data) {
+     int n = data.length;
+     int[] temp = Arrays.copyOf(data, n);
+     Arrays.sort(temp);
+     for (int j = 0; j < n - 1; j++)
+     if (temp[j] == temp[j + 1]) return false;
+     return true;
+     }
 
-    private static int[] randomArray(int n) {
-        Random rand = new Random(42); // fixed seed for reproducibility
-        int[] arr = new int[n];
-        for (int i = 0; i < n; i++) arr[i] = rand.nextInt();
-        return arr;
-    }
+     // ---- Helpers --------------------------------------------
+     private static int[] randomArray(int n) {
+     Random rand = new Random();
+     int[] a = new int[n];
+     for (int i = 0; i < n; i++) a[i] = rand.nextInt();
+     return a;
+     }
 
-    private static long measureMsUnique1(int n) {
-        int[] data = randomArray(n);
-        long start = System.nanoTime();
-        unique1(data);
-        return (System.nanoTime() - start) / 1_000_000;
-    }
+     private static long measureMsUnique1(int[] data) {
+     long start = System.nanoTime();
+     unique1(data);
+     return (System.nanoTime() - start) / 1_000_000;
+     }
 
-    private static long measureMsUnique2(int n) {
-        int[] data = randomArray(n);
-        long start = System.nanoTime();
-        unique2(data);
-        return (System.nanoTime() - start) / 1_000_000;
-    }
+     private static long measureMsUnique2(int[] data) {
+     long start = System.nanoTime();
+     unique2(data);
+     return (System.nanoTime() - start) / 1_000_000;
+     }
 
-    private static int findMaxN(int algo, long limitMs, int maxN) {
-        int n = 1;
+     private static long median(long[] arr) {
+     Arrays.sort(arr);
+     return arr[arr.length / 2];
+     }
 
-        while (n <= maxN) {
-            long time;
-            try {
-                if (algo == 1) time = measureMsUnique1(n);
-                else time = measureMsUnique2(n);
-            } catch (OutOfMemoryError e) {
-                System.out.println("OOM at n = " + n + ", reducing upper bound.");
-                break; // stop if memory fails
-            }
+     // ---- Experimental Analysis ------------------------------
+     private static long timeUnique1(int n, int repeats) {
+     long[] times = new long[repeats];
+     for (int r = 0; r < repeats; r++) {
+     int[] data = randomArray(n);
+     times[r] = measureMsUnique1(data);
+     }
+     return median(times);
+     }
 
-            System.out.printf("Algo %d: n=%d, time=%d ms%n", algo, n, time);
+     private static long timeUnique2(int n, int repeats) {
+     long[] times = new long[repeats];
+     for (int r = 0; r < repeats; r++) {
+     int[] data = randomArray(n);
+     times[r] = measureMsUnique2(data);
+     }
+     return median(times);
+     }
 
-            if (time > limitMs) break;
-            n *= 2;
-        }
+     public static void main(String[] args) {
+     final long LIMIT_MS = 60_000; // 1 minute
+     final int REPEATS = 10;
 
-        int low = n / 2;
-        int high = Math.min(n, maxN);
+     // Sample small sizes to estimate runtime
+     int sampleN1 = 20000;   // adjust if too fast or slow
+     int sampleN2 = 50000;  // adjust if too fast or slow
 
-        while (low + 1 < high) {
-            int mid = low + (high - low) / 2;
-            long time;
-            try {
-                if (algo == 1) time = measureMsUnique1(mid);
-                else time = measureMsUnique2(mid);
-            } catch (OutOfMemoryError e) {
-                System.out.println("OOM at mid = " + mid + ", reducing high.");
-                high = mid;
-                continue;
-            }
+     System.out.println("Testing unique1...");
+     long t1 = timeUnique1(sampleN1, REPEATS);
+     double c1 = (double) t1 / (sampleN1 * sampleN1);
+     int estN1 = (int) Math.sqrt(LIMIT_MS / c1);
+     System.out.printf("Sample n=%d took %d ms → estimated max n ≈ %d%n",
+     sampleN1, t1, estN1);
 
-            System.out.printf("Algo %d: binary search mid=%d, time=%d ms%n", algo, mid, time);
-
-            if (time <= limitMs) low = mid;
-            else high = mid;
-        }
-
-        return low;
-    }
-
-
-
-    //I've put limits to n because i get OutOfMemory excpetion trying to exceed these amounts
-    public static void main(String[] args) {
-        final long LIMIT_MS = 60_000; // 1 minute
-        final int MAX_N1 = 500_000;   // upper bound for unique1 to avoid huge O(n^2)
-        final int MAX_N2 = 5_000_000; // upper bound for unique2
-
-        System.out.println("=== Finding max n for unique1 (O(n^2)) ===");
-        int maxUnique1 = findMaxN(1, LIMIT_MS, MAX_N1);
-        System.out.println("Maximum n for unique1 ≈ " + maxUnique1 + "\n");
-
-        System.out.println("=== Finding max n for unique2 (O(n log n)) ===");
-        int maxUnique2 = findMaxN(2, LIMIT_MS, MAX_N2);
-        System.out.println("Maximum n for unique2 ≈ " + maxUnique2);
-    }
+     System.out.println("\nTesting unique2...");
+     long t2 = timeUnique2(sampleN2, REPEATS);
+     double log2 = Math.log(sampleN2) / Math.log(2);
+     double c2 = (double) t2 / (sampleN2 * log2);
+     // approximate solution for n log n = LIMIT/c
+     int estN2 = (int) (LIMIT_MS / (c2 * Math.log(LIMIT_MS) / Math.log(2)));
+     System.out.printf("Sample n=%d took %d ms → estimated max n ≈ %d%n",
+     sampleN2, t2, estN2);
+     }
 }
