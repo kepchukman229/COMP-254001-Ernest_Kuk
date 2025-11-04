@@ -23,6 +23,7 @@
 package lists;
 
 import java.util.Iterator;
+import java.util.Stack;
 
 /**
  * An interface for positional lists.
@@ -146,16 +147,28 @@ public interface PositionalList<E> extends Iterable<E> {
   Iterable<Position<E>> positions();
   
   
-  
-  public static <E> int indexOf(PositionalList<E> list, Position<E> p) {
+  //Exercise 1
+  default int indexOf(Position<E> p) {
 	    int index = 0;
-	    Position<E> cursor = list.first(); // start from the beginning
+	    Position<E> cursor = first(); 
 	    while (cursor != null && cursor != p) {
-	        cursor = list.after(cursor);   // move to next position
+	        cursor = after(cursor);  
 	        index++;
 	    }
 	    if (cursor == null)
-	        return -1;  // if position not found
-	    return index;   // if found return index
+	        return -1;  //if not found return -1
+	    return index;  
 	}
+  
+  
+  
+  
+  
+  
+  //Exercise 2
+  public static <E> void transfer(Stack<E> S, Stack<E> T) {
+      while (!S.isEmpty()) {
+          T.push(S.pop());
+      }
+  }  
 }
