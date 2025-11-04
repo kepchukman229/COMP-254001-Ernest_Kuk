@@ -87,7 +87,7 @@ public class LinkedQueue<E> implements Queue<E> {
   
   //Exercise 3
   public void concatenate(LinkedQueue<E> Q2) {
-	  if (Q2 == null || Q2.isEmpty()) return;      // nothing to do
-	  this.list.append(Q2.list);                    // O(1) list stitch
+	  if (Q2 == null || Q2.isEmpty()) return;  
+	  this.list.append(Q2.list);                    //O(1) list stitch
 	}
 }

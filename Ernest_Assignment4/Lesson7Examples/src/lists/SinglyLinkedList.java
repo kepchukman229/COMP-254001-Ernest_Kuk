@@ -230,17 +230,17 @@ public class SinglyLinkedList<E> implements Cloneable {
 	 if (other == null || other.isEmpty()) return;
 	
 	 if (this.isEmpty()) {
-	   // this becomes other
+	   //this becomes other
 	   this.head = other.head;
 	   this.tail = other.tail;
 	 } else {
-	   // link my tail to other's head and move tail
+	   //link my tail to other's head and move tail
 	   this.tail.setNext(other.head);
 	   this.tail = other.tail;
 	 }
 	 this.size += other.size;
 	
-	 // empty `other`
+	 //empty `other`
 	 other.head = other.tail = null;
 	 other.size = 0;
 	}
