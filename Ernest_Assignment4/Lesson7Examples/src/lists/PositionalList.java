@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package lists;
-//asd
+
 import java.util.Iterator;
 
 /**
@@ -144,4 +144,18 @@ public interface PositionalList<E> extends Iterable<E> {
    * @return iterable collection of the list's positions
    */
   Iterable<Position<E>> positions();
+  
+  
+  
+  public static <E> int indexOf(PositionalList<E> list, Position<E> p) {
+	    int index = 0;
+	    Position<E> cursor = list.first(); // start from the beginning
+	    while (cursor != null && cursor != p) {
+	        cursor = list.after(cursor);   // move to next position
+	        index++;
+	    }
+	    if (cursor == null)
+	        return -1;  // if position not found
+	    return index;   // if found return index
+	}
 }
