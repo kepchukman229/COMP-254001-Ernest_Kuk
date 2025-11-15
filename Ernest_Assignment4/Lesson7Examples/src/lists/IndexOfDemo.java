@@ -24,10 +24,10 @@ public class IndexOfDemo {
         System.out.println("Index of C: " + list.indexOf(p3));
         System.out.println("Index of D: " + list.indexOf(p4));
 
-        // Try invalid
+        //invalid
         PositionalList<String> other = new LinkedPositionalList<>();
         Position<String> external = other.addLast("Z");
-        System.out.println("Index of external Z: " + list.indexOf(external));
+        System.out.println("Index of Z: " + list.indexOf(external));
     
 	
 	

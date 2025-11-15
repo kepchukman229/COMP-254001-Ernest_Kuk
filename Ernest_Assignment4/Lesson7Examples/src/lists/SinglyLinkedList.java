@@ -225,7 +225,6 @@ public class SinglyLinkedList<E> implements Cloneable {
   
   
   	//Exercise 3
-	//O(1) append: take all nodes from `other` and attach to this list.
 	public void append(SinglyLinkedList<E> other) {
 	 if (other == null || other.isEmpty()) return;
 	

@@ -22,10 +22,8 @@ public class QueueConcatDemo {
 
 	    System.out.println("\nAfter concatenate:");
 	    System.out.println("Q1 = " + Q1);
-	    System.out.println("Q2 = " + Q2 + "  (should be empty)");
+	    System.out.println("Q2 = " + Q2);
 
-	    System.out.println("\nDequeue Q1 (expect 1..6):");
-	    while (!Q1.isEmpty()) System.out.print(Q1.dequeue() + " ");
 	    System.out.println("\nQ2 is empty? " + Q2.isEmpty());
 	  }
 }
